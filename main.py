@@ -196,23 +196,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.lineEdit_optativa.setText("")
             self.lineEdit_repetidor.setText("")
 
-class Asistente(QMainWindow):
+class Asistente(QWizard):
     def __init__(self):
         super().__init__()
 
         self.setWindowTitle("Mi aplicación")
 
-        self.button = QPushButton("Presióname para un Wizard")
-        self.button.clicked.connect(self.button_clicked)
-        self.setCentralWidget(self.button)
+        #self.button = QPushButton("Presióname para un Wizard")
+        #self.button.clicked.connect(self.button_clicked)
+        #self.setCentralWidget(self.button)
         
-        self.wizard = QWizard()
+        #self.wizard = QWizard()
 
-        self.wizard.setWizardStyle(QWizard.ModernStyle)
+        self.setWizardStyle(QWizard.ModernStyle)
 
-        self.wizard.setPixmap(QWizard.WatermarkPixmap,QPixmap('Watermark.png'))
-        self.wizard.setPixmap(QWizard.LogoPixmap,QPixmap('Logo.png'))
-        self.wizard.setPixmap(QWizard.BannerPixmap,QPixmap('Banner.png'))
+        self.setPixmap(QWizard.WatermarkPixmap,QPixmap('Watermark.png'))
+        self.setPixmap(QWizard.LogoPixmap,QPixmap('Logo.png'))
+        self.setPixmap(QWizard.BannerPixmap,QPixmap('Banner.png'))
 
         #PÁGINA 1
         page1 = QWizardPage()
@@ -248,7 +248,7 @@ class Asistente(QMainWindow):
         page1.registerField('nombre_tutor*', self.lineEdit_nombre_tutor,self.lineEdit_nombre_tutor.text(),'textChanged')
         page1.registerField('nombre_delegado*', self.lineEdit_nombre_delegado,self.lineEdit_nombre_delegado.text(),'textChanged')
         page1.registerField('nombre_supervisor*', self.lineEdit_nombre_supervisor,self.lineEdit_nombre_supervisor.text(),'textChanged')
-        self.wizard.addPage(page1)
+        self.addPage(page1)
 
         #PÁGINA 2
         page2 = QWizardPage()
@@ -280,7 +280,7 @@ class Asistente(QMainWindow):
 
         page2.registerField('curso', self.desplegable_curso,self.desplegable_curso.currentText())
         page2.registerField('clase', self.desplegable_clase,self.desplegable_clase.currentText())
-        self.wizard.addPage(page2)
+        self.addPage(page2)
 
 
         #PÁGINA 3
@@ -299,7 +299,7 @@ class Asistente(QMainWindow):
         vLayout31.addLayout(hLayout31)
 
         page3.registerField('aprobacion', self.check_aprobacion_acta_anterior, "Test")
-        self.wizard.addPage(page3)
+        self.addPage(page3)
 
 
 
@@ -319,7 +319,7 @@ class Asistente(QMainWindow):
         vLayout41.addLayout(hLayout41)
 
         page4.registerField('promocion', self.spin_promocion_extraordinaria, self.spin_promocion_extraordinaria.text())
-        self.wizard.addPage(page4)
+        self.addPage(page4)
 
 
         #PÁGINA FINAL
@@ -331,18 +331,18 @@ class Asistente(QMainWindow):
         hLayout2.addWidget(label)
         pageFinal.setFinalPage(True)
 
-        next = self.wizard.button(QWizard.NextButton)
+        next = self.button(QWizard.NextButton)
         #next.clicked.connect(lambda:label.setText(page1.field('miCampo')))
 
         # Y también podemos recuperar la información cuando se complete el asistente
-        finish = self.wizard.button(QWizard.FinishButton)
+        finish = self.button(QWizard.FinishButton)
         
         finish.clicked.connect(self.generate)
 
-        self.wizard.addPage(pageFinal)
+        self.addPage(pageFinal)
 
     def button_clicked(self, s):
-        self.wizard.show()
+        self.show()
 
 
     def generate(self):
