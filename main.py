@@ -372,8 +372,14 @@ class Asistente(QWizard):
         xobj_name = makerl(canvas, template_obj)
         canvas.doForm(xobj_name)
 
-        ystart = 670
 
+        query_promocionan = QSqlQuery("SELECT COUNT(*) FROM alumnos WHERE suspensos3 <= 2",db=db)
+        query_promocionan.next()
+        query_total_alumnos = QSqlQuery("SELECT COUNT(*) FROM alumnos",db=db)
+        query_total_alumnos.next()
+
+        porcentaje_promocionados = str(round(100 * float(query_promocionan.value(0))/float(query_total_alumnos.value(0))))
+        ystart = 670
         canvas.drawString(92, ystart+7, self.data['tutor'])
 
         # Ponemos la fecha de hoy
@@ -387,6 +393,7 @@ class Asistente(QWizard):
         canvas.drawString(177, ystart-12, self.data['delegado'])
         canvas.drawString(410, ystart+7, self.data['supervisor'])
         canvas.drawString(412, ystart-490, self.data['promocion_extraordinaria'])
+        canvas.drawString(440, ystart-470, porcentaje_promocionados)
 
         canvas.save()
         QMessageBox.information(self, "Finalizado", "Se ha generado el PDF")
