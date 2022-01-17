@@ -1,0 +1,81 @@
+SQLite format 3   @     m                                                               m .S`
+ø ¼ ¼É                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ‚
+ƒktablealumnosalumnosCREATE TABLE alumnos(
+  id int primary key,
+  nombre VARCHAR(20),
+  apellidos VARCHAR(20),
+  curso VARCHAR(20),
+  suspensos1 INT,
+  suspensos2 INT,
+  suspensos3 int,
+  itinerario varchar(12),
+  optativa VARCHAR(15),
+  repetidor boolean
+  )-A indexsqlite_autoindex_alumnos_1alumnos       
+È 
+
+™ Â…I
+Î‡H 
+¿
+™
+/
+/
+M¹¹¹¹¹¹¹                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         È Ê
+
+
+
+
+
+
+
+3Âº ESOÈ ¶
+
+
+
+
+
+
+
+3Âº ESOÈ ¢
+
+
+
+
+
+
+
+3Âº ESOÈ Ž
+
+
+
+
+
+
+
+3Âº ESOÈ z
+
+
+
+
+
+
+
+3Âº ESOÈ f
+
+
+
+
+
+
+
+3Âº EÈ 				dddddd3Âº ESO2222222È n		JavierPÃ©rez4Âº ESOCienciasFrancÃ©s
+¦ %
+È /$
+	
+zxczxczx3Âº ESOaaasss?	/#		SaraMartÃ­nez Naranjo4Âº ESOHumanidadesRobÃ³ticaF%-%JosÃ© RamÃ³nVelÃ¡zquez Nieto4Âº ESOCienciasEstadÃ­stica=/%MartaBermÃºdez SuÃ¡rez4Âº ESOSocialesEstadÃ­stica?1	MiguelJimÃ©nez Matamalas3Âº ESOSocialesRobÃ³tica   !;:'#ÃlvaroCervera DÃ­az3Âº ESOHumanidadesFrancÃ©s=)	#	VictoriaLÃ³pez CortÃ©s3Âº ESOHumanidadesFrancÃ©s:'RubÃ©nLÃ³pez Bernal3Âº ESOCienciasRobÃ³tica;-	#PabloSÃ¡nchez Barrero3Âº ESOHumanidadesFrancÃ©s<	)	AlejandroLÃ³pez Aguilar3Âº ESOCienciasRobÃ³tica
+   
+Æ üöðêäÞØÒÌÆ®®ÀÆÆÆÆÆÆÆ                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       2   -   (   #          
+
+   
+
+				
