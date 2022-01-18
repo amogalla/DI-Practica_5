@@ -10,6 +10,8 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayou
 from PySide6.QtWidgets import QMessageBox, QPushButton, QLineEdit, QApplication, QComboBox, QCheckBox, QSpinBox
 from reportlab.pdfgen.canvas import Canvas
 from PySide6.QtSql import QSqlDatabase, QSqlQuery, QSqlRelation, QSqlRelationalTableModel
+import pyqtgraph as pg
+import pyqtgraph.exporters
 
 from pdfrw import PdfReader
 from pdfrw.buildxobj import pagexobj
@@ -378,6 +380,25 @@ class Asistente(QWizard):
         query_total_alumnos = QSqlQuery("SELECT COUNT(*) FROM alumnos",db=db)
         query_total_alumnos.next()
 
+        #Para generar la primera gráfica, almacenamos en tres variables el número de alumnos con más de 2 suspensos en cada evaluación
+        query_proyeccion_repetidores_1 = QSqlQuery("SELECT COUNT(*) FROM alumnos WHERE suspensos1 >= 3",db=db)
+        query_proyeccion_repetidores_1.next()
+
+        query_proyeccion_repetidores_2 = QSqlQuery("SELECT COUNT(*) FROM alumnos WHERE suspensos2 >= 3",db=db)
+        query_proyeccion_repetidores_2.next()
+
+        query_proyeccion_repetidores_3 = QSqlQuery("SELECT COUNT(*) FROM alumnos WHERE suspensos3 >= 3",db=db)
+        query_proyeccion_repetidores_3.next()
+
+        #Introducimos la gráfica
+        #print(float(query_promocionan.value[0]))
+        #print(float(query_proyeccion_repetidores_1.value[0]))
+        plt = pg.plot([int(query_proyeccion_repetidores_1.value(0)),int(query_proyeccion_repetidores_2.value(0)), int(query_proyeccion_repetidores_3.value(0))])
+        exporter = pg.exporters.ImageExporter(plt.plotItem)
+        exporter.parameters()['width'] = 100   # (afecta a la altura de forma proporcional)
+        exporter.export('graphic.png')
+        canvas.drawImage("graphic.png", 350, 0, width=None,height=None,mask=None)
+        
         porcentaje_promocionados = str(round(100 * float(query_promocionan.value(0))/float(query_total_alumnos.value(0))))
         ystart = 670
         canvas.drawString(92, ystart+7, self.data['tutor'])
