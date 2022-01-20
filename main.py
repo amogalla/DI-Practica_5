@@ -327,10 +327,36 @@ class Asistente(QWizard):
         #PÁGINA FINAL
         pageFinal = QWizardPage()
         pageFinal.setTitle('Generación Acta I.E.S. Virgen de la Invención')
-        pageFinal.setSubTitle('Confirmación de generación de acta')
-        label = QLabel()
-        hLayout2 = QHBoxLayout(pageFinal)
-        hLayout2.addWidget(label)
+        pageFinal.setSubTitle('Generación de acta')
+        self.label_itinerario = QLabel("Itinerario")
+        self.desplegable_itinerario = QComboBox()
+        
+        self.label_optativa = QLabel("Asignatura optativa")
+        self.desplegable_optativa = QComboBox()
+        query = QSqlQuery("SELECT DISTINCT itinerario FROM alumnos",db=db)
+        # Recorremos el resultado de esa query agregando al comboBox el listado de artistas
+        while query.next():
+            self.desplegable_itinerario.addItem(query.value(0))
+
+        query2 = QSqlQuery("SELECT DISTINCT optativa FROM alumnos",db=db)
+        # Recorremos el resultado de esa query agregando al comboBox el listado de artistas
+        while query2.next():
+            self.desplegable_optativa.addItem(query2.value(0))
+
+        vLayout5 = QVBoxLayout(pageFinal)
+        hLayout5 = QHBoxLayout(pageFinal)
+        hLayout51 = QHBoxLayout(pageFinal)
+
+        hLayout5.addWidget(self.label_itinerario)
+        hLayout5.addWidget(self.desplegable_itinerario)
+        vLayout5.addLayout(hLayout5)
+
+        hLayout51.addWidget(self.label_optativa)
+        hLayout51.addWidget(self.desplegable_optativa)
+        vLayout5.addLayout(hLayout51)
+
+        pageFinal.registerField('itinerario', self.desplegable_itinerario,self.desplegable_itinerario.currentText())
+        pageFinal.registerField('optativa', self.desplegable_optativa,self.desplegable_optativa.currentText())
         pageFinal.setFinalPage(True)
 
         next = self.button(QWizard.NextButton)
@@ -362,7 +388,8 @@ class Asistente(QWizard):
             'clase': self.desplegable_clase.currentText(),
             'aprobacion_acta_anterior': self.aprobado,
             'promocion_extraordinaria': self.spin_promocion_extraordinaria.text(),
-            
+            'itinerario': self.desplegable_itinerario.currentText(),
+            'optativa': self.desplegable_optativa.currentText(),
         }
         outfile = "Acta_cumplimentada.pdf"
 
@@ -381,26 +408,44 @@ class Asistente(QWizard):
         query_total_alumnos.next()
 
         #Para generar la primera gráfica, almacenamos en tres variables el número de alumnos con más de 2 suspensos en cada evaluación
-        query_proyeccion_repetidores_1 = QSqlQuery("SELECT COUNT(*) FROM alumnos WHERE suspensos1 >= 3",db=db)
+        query_proyeccion_repetidores_1 = QSqlQuery("SELECT COUNT(*) FROM alumnos WHERE suspensos1 >= 3 AND curso ='" + self.data['clase'] + "'",db=db)
         query_proyeccion_repetidores_1.next()
 
-        query_proyeccion_repetidores_2 = QSqlQuery("SELECT COUNT(*) FROM alumnos WHERE suspensos2 >= 3",db=db)
+        query_proyeccion_repetidores_2 = QSqlQuery("SELECT COUNT(*) FROM alumnos WHERE suspensos2 >= 3 AND curso ='" + self.data['clase'] + "'",db=db)
         query_proyeccion_repetidores_2.next()
 
-        query_proyeccion_repetidores_3 = QSqlQuery("SELECT COUNT(*) FROM alumnos WHERE suspensos3 >= 3",db=db)
+        query_proyeccion_repetidores_3 = QSqlQuery("SELECT COUNT(*) FROM alumnos WHERE suspensos3 >= 3 AND curso ='" + self.data['clase'] + "'",db=db)
         query_proyeccion_repetidores_3.next()
 
         #Introducimos la gráfica
         #print(float(query_promocionan.value[0]))
-        #print(float(query_proyeccion_repetidores_1.value[0]))
-        plt = pg.plot([int(query_proyeccion_repetidores_1.value(0)),int(query_proyeccion_repetidores_2.value(0)), int(query_proyeccion_repetidores_3.value(0))])
-        exporter = pg.exporters.ImageExporter(plt.plotItem)
+        print(float(query_proyeccion_repetidores_1.value(0)))
+        plt1 = pg.plot([int(query_proyeccion_repetidores_1.value(0)),int(query_proyeccion_repetidores_2.value(0)), int(query_proyeccion_repetidores_3.value(0))])
+        plt1.hide()
+        exporter = pg.exporters.ImageExporter(plt1.plotItem)
         exporter.parameters()['width'] = 150   # (afecta a la altura de forma proporcional)
         exporter.export('graphic.png')
-        #exporter.close()
-        #exporter.setParent(None)
-        #exporter.exit()
+        #plt1.close()
         canvas.drawImage("graphic.png", 233, 426, width=None,height=None,mask=None)
+
+        #Para generar la 2ª gráfica, almacenamos en tres variables el número de alumnos que promocionarían en cada evaluación según el itinerario indicado.
+        query_promocion1_itinerario = QSqlQuery("SELECT COUNT(*) FROM alumnos WHERE suspensos1 < 3 AND itinerario ='" + self.data['itinerario'] + "'",db=db)
+        query_promocion1_itinerario.next()
+
+        query_promocion2_itinerario = QSqlQuery("SELECT COUNT(*) FROM alumnos WHERE suspensos2 < 3 AND itinerario ='" + self.data['itinerario'] + "'",db=db)
+        query_promocion2_itinerario.next()
+
+        query_promocion3_itinerario = QSqlQuery("SELECT COUNT(*) FROM alumnos WHERE suspensos3 < 3 AND itinerario ='" + self.data['itinerario'] + "'",db=db)
+        query_promocion3_itinerario.next()
+
+        plt2 = pg.plot([int(query_promocion1_itinerario.value(0)),int(query_promocion2_itinerario.value(0)), int(query_promocion3_itinerario.value(0))])
+        plt2.hide()
+        exporter2 = pg.exporters.ImageExporter(plt2.plotItem)
+        exporter2.parameters()['width'] = 150   # (afecta a la altura de forma proporcional)
+        exporter2.export('graphic2.png')
+        #plt2.close()
+        canvas.drawImage("graphic2.png", 133, 626, width=None,height=None,mask=None)
+
         
         porcentaje_promocionados = str(round(100 * float(query_promocionan.value(0))/float(query_total_alumnos.value(0))))
         ystart = 670
