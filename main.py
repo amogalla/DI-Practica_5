@@ -395,9 +395,12 @@ class Asistente(QWizard):
         #print(float(query_proyeccion_repetidores_1.value[0]))
         plt = pg.plot([int(query_proyeccion_repetidores_1.value(0)),int(query_proyeccion_repetidores_2.value(0)), int(query_proyeccion_repetidores_3.value(0))])
         exporter = pg.exporters.ImageExporter(plt.plotItem)
-        exporter.parameters()['width'] = 100   # (afecta a la altura de forma proporcional)
+        exporter.parameters()['width'] = 150   # (afecta a la altura de forma proporcional)
         exporter.export('graphic.png')
-        canvas.drawImage("graphic.png", 350, 0, width=None,height=None,mask=None)
+        #exporter.close()
+        #exporter.setParent(None)
+        #exporter.exit()
+        canvas.drawImage("graphic.png", 233, 426, width=None,height=None,mask=None)
         
         porcentaje_promocionados = str(round(100 * float(query_promocionan.value(0))/float(query_total_alumnos.value(0))))
         ystart = 670
@@ -418,6 +421,7 @@ class Asistente(QWizard):
 
         canvas.save()
         QMessageBox.information(self, "Finalizado", "Se ha generado el PDF")
+        #self.close()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
