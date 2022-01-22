@@ -1,16 +1,11 @@
 import sys
-from PySide6.QtWidgets import QApplication, QMainWindow, QAbstractItemView
-from PySide6.QtSql import QSqlDatabase, QSqlQuery, QSqlRelation, QSqlRelationalTableModel
 from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QApplication, QMainWindow, QAbstractItemView
+from PySide6.QtSql import QSqlDatabase, QSqlQuery, QSqlRelationalTableModel
 from design import Ui_MainWindow
-from datetime import datetime
-import sys
-from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWizard, QWizardPage, QLineEdit, QHBoxLayout, QLabel
-from PySide6.QtWidgets import QMessageBox, QPushButton, QLineEdit, QApplication, QComboBox, QCheckBox, QSpinBox
-from reportlab.pdfgen.canvas import Canvas
-from PySide6.QtSql import QSqlDatabase, QSqlQuery, QSqlRelation, QSqlRelationalTableModel
+from PySide6.QtWidgets import QApplication, QMainWindow
 import pyqtgraph as pg
+from clase_asistente import Asistente
 import pyqtgraph.exporters
 
 from pdfrw import PdfReader
@@ -18,7 +13,7 @@ from pdfrw.buildxobj import pagexobj
 from pdfrw.toreportlab import makerl
 # Realizamos la carga y apertura de la base de datos
 db = QSqlDatabase("QSQLITE")
-db.setDatabaseName("alumnos3.sqlite")
+db.setDatabaseName("alumnos.sqlite")
 
 db.open()
 
@@ -29,6 +24,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Cargamos la UI
         self.setupUi(self)
         self.boton.clicked.connect(self.button_clicked)
+        self.botonGrafica.clicked.connect(self.mostrar_grafica)
+        
         # Deshabilitamos la edición del cuadro de texto del ID
         self.lineEdit_ID.setEnabled(False)
 
@@ -78,6 +75,27 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def button_clicked(self, s):
         self.asistente.show()
+    
+    def mostrar_grafica(self, s):
+        #Para generar la primera gráfica, almacenamos en tres variables el número de alumnos con más de 2 suspensos en cada evaluación
+        query_matriculados_ciencias = QSqlQuery("SELECT COUNT(*) FROM alumnos WHERE itinerario ='Ciencias'",db=db)
+        query_matriculados_ciencias.next()
+
+        query_matriculados_sociales = QSqlQuery("SELECT COUNT(*) FROM alumnos WHERE itinerario ='Sociales'",db=db)
+        query_matriculados_sociales.next()
+
+        query_matriculados_humanidades = QSqlQuery("SELECT COUNT(*) FROM alumnos WHERE itinerario ='Humanidades'",db=db)
+        query_matriculados_humanidades.next()
+
+        #Introducimos la gráfica
+        #self.graphWidget = pg.PlotWidget()
+        #self.setCentralWidget(self.graphWidget)
+
+        #self.graphWidget.setBackground('w')
+        pen = pg.mkPen(color=(30, 30, 255))
+        grafica = pg.plot([int(query_matriculados_ciencias.value(0)),int(query_matriculados_sociales.value(0)), int(query_matriculados_humanidades.value(0))], pen = pen)
+        grafica.setBackground('w')
+
 
     def seleccion(self, seleccion):
         # Recuerda que indexes almacena los índices de la selección
@@ -152,7 +170,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         query = QSqlQuery("SELECT id FROM alumnos",db=db)
         while query.next():
             indice=query.value(0)
-        # Ponemos en blanco el texto del título en el formulario
+        # Ponemos en blanco los textos
         self.lineEdit_nombre.setText("")
         self.lineEdit_apellidos.setText("")
         self.lineEdit_suspensos1.setText("")
@@ -162,9 +180,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.lineEdit_optativa.setText("")
         self.lineEdit_repetidor.setText("")
         self.lineEdit_ID.setText(str(indice + 1))
-        # Ponemos el comboBox de artistas al primero de la lista
         self.comboBox_curso.setCurrentIndex(0)
-        # Establecemos en blanco los valores (título y artista) de esa nueva fila
         self.modelo.setData(self.modelo.index(nuevaFila, 1), "")
         self.modelo.setData(self.modelo.index(nuevaFila, 2), "")
         self.modelo.setData(self.modelo.index(nuevaFila, 3), "3º ESO")
@@ -198,275 +214,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.lineEdit_optativa.setText("")
             self.lineEdit_repetidor.setText("")
 
-class Asistente(QWizard):
-    def __init__(self):
-        super().__init__()
-
-        self.setWindowTitle("Mi aplicación")
-
-        #self.button = QPushButton("Presióname para un Wizard")
-        #self.button.clicked.connect(self.button_clicked)
-        #self.setCentralWidget(self.button)
-        
-        #self.wizard = QWizard()
-
-        self.setWizardStyle(QWizard.ModernStyle)
-
-        self.setPixmap(QWizard.WatermarkPixmap,QPixmap('Watermark.png'))
-        self.setPixmap(QWizard.LogoPixmap,QPixmap('Logo.png'))
-        self.setPixmap(QWizard.BannerPixmap,QPixmap('Banner.png'))
-
-        #PÁGINA 1
-        page1 = QWizardPage()
-        page1.setTitle('Generación Acta I.E.S. Virgen de la Invención')
-        page1.setSubTitle('Rellena la siguiente información para generar el acta de evaluación')
-        
-        self.lineEdit_nombre_tutor = QLineEdit()
-        self.label_nombre_tutor = QLabel("Tutor")
-
-        self.lineEdit_nombre_delegado = QLineEdit()
-        self.label_nombre_delegado = QLabel("Delegado")
-
-        self.lineEdit_nombre_supervisor = QLineEdit()
-        self.label_nombre_supervisor = QLabel("Supervisor")
-
-        vLayout11 = QVBoxLayout(page1)
-        hLayout11 = QHBoxLayout(page1)
-        hLayout12 = QHBoxLayout(page1)
-        hLayout13 = QHBoxLayout(page1)
-
-        hLayout11.addWidget(self.label_nombre_tutor)
-        hLayout11.addWidget(self.lineEdit_nombre_tutor)
-        vLayout11.addLayout(hLayout11)
-
-        hLayout12.addWidget(self.label_nombre_delegado)
-        hLayout12.addWidget(self.lineEdit_nombre_delegado)
-        vLayout11.addLayout(hLayout12)
-
-        hLayout13.addWidget(self.label_nombre_supervisor)
-        hLayout13.addWidget(self.lineEdit_nombre_supervisor)
-        vLayout11.addLayout(hLayout13)
-
-        page1.registerField('nombre_tutor*', self.lineEdit_nombre_tutor,self.lineEdit_nombre_tutor.text(),'textChanged')
-        page1.registerField('nombre_delegado*', self.lineEdit_nombre_delegado,self.lineEdit_nombre_delegado.text(),'textChanged')
-        page1.registerField('nombre_supervisor*', self.lineEdit_nombre_supervisor,self.lineEdit_nombre_supervisor.text(),'textChanged')
-        self.addPage(page1)
-
-        #PÁGINA 2
-        page2 = QWizardPage()
-        page2.setTitle('Generación Acta I.E.S. Virgen de la Invención')
-        page2.setSubTitle('Rellena la siguiente información para generar el acta de evaluación')
-        
-        self.label_curso = QLabel("Curso")
-        self.desplegable_curso = QComboBox()
-        self.label_clase = QLabel("Clase")
-        self.desplegable_clase = QComboBox()
-        query = QSqlQuery("SELECT DISTINCT curso FROM alumnos",db=db)
-        # Recorremos el resultado de esa query agregando al comboBox el listado de artistas
-        while query.next():
-            self.desplegable_clase.addItem(query.value(0))
-
-        self.desplegable_curso.addItem("2021/2022")
-        self.desplegable_curso.addItem("2022/2023")
-        vLayout2 = QVBoxLayout(page2)
-        hLayout2 = QHBoxLayout(page2)
-        hLayout3 = QHBoxLayout(page2)
-
-        hLayout2.addWidget(self.label_curso)
-        hLayout2.addWidget(self.desplegable_curso)
-        vLayout2.addLayout(hLayout2)
-
-        hLayout2.addWidget(self.label_clase)
-        hLayout2.addWidget(self.desplegable_clase)
-        vLayout2.addLayout(hLayout3)
-
-        page2.registerField('curso', self.desplegable_curso,self.desplegable_curso.currentText())
-        page2.registerField('clase', self.desplegable_clase,self.desplegable_clase.currentText())
-        self.addPage(page2)
-
-
-        #PÁGINA 3
-        page3 = QWizardPage()
-        page3.setTitle('Generación Acta I.E.S. Virgen de la Invención')
-        page3.setSubTitle('Rellena la siguiente información para generar el acta de evaluación')
-        
-        self.label_aprobacion_acta_anterior = QLabel("Aprobacion del acta anterior:")
-        self.check_aprobacion_acta_anterior = QCheckBox()
-
-        vLayout31 = QVBoxLayout(page3)
-        hLayout31 = QHBoxLayout(page3)
-
-        hLayout31.addWidget(self.label_aprobacion_acta_anterior)
-        hLayout31.addWidget(self.check_aprobacion_acta_anterior)
-        vLayout31.addLayout(hLayout31)
-
-        page3.registerField('aprobacion', self.check_aprobacion_acta_anterior, "Test")
-        self.addPage(page3)
-
-
-
-        #PÁGINA 4
-        page4 = QWizardPage()
-        page4.setTitle('Generación Acta I.E.S. Virgen de la Invención')
-        page4.setSubTitle('Rellena la siguiente información para generar el acta de evaluación')
-        
-        self.label_promocion_extraordinaria = QLabel("Alumnos con promoción extraordinaria:")
-        self.spin_promocion_extraordinaria = QSpinBox()
-
-        vLayout41 = QVBoxLayout(page4)
-        hLayout41 = QHBoxLayout(page4)
-
-        hLayout41.addWidget(self.label_promocion_extraordinaria)
-        hLayout41.addWidget(self.spin_promocion_extraordinaria)
-        vLayout41.addLayout(hLayout41)
-
-        page4.registerField('promocion', self.spin_promocion_extraordinaria, self.spin_promocion_extraordinaria.text())
-        self.addPage(page4)
-
-
-        #PÁGINA FINAL
-        pageFinal = QWizardPage()
-        pageFinal.setTitle('Generación Acta I.E.S. Virgen de la Invención')
-        pageFinal.setSubTitle('Generación de acta')
-        self.label_itinerario = QLabel("Itinerario")
-        self.desplegable_itinerario = QComboBox()
-        
-        self.label_optativa = QLabel("Asignatura optativa")
-        self.desplegable_optativa = QComboBox()
-        query = QSqlQuery("SELECT DISTINCT itinerario FROM alumnos",db=db)
-        # Recorremos el resultado de esa query agregando al comboBox el listado de artistas
-        while query.next():
-            self.desplegable_itinerario.addItem(query.value(0))
-
-        query2 = QSqlQuery("SELECT DISTINCT optativa FROM alumnos",db=db)
-        # Recorremos el resultado de esa query agregando al comboBox el listado de artistas
-        while query2.next():
-            self.desplegable_optativa.addItem(query2.value(0))
-
-        vLayout5 = QVBoxLayout(pageFinal)
-        hLayout5 = QHBoxLayout(pageFinal)
-        hLayout51 = QHBoxLayout(pageFinal)
-
-        hLayout5.addWidget(self.label_itinerario)
-        hLayout5.addWidget(self.desplegable_itinerario)
-        vLayout5.addLayout(hLayout5)
-
-        hLayout51.addWidget(self.label_optativa)
-        hLayout51.addWidget(self.desplegable_optativa)
-        vLayout5.addLayout(hLayout51)
-
-        pageFinal.registerField('itinerario', self.desplegable_itinerario,self.desplegable_itinerario.currentText())
-        pageFinal.registerField('optativa', self.desplegable_optativa,self.desplegable_optativa.currentText())
-        pageFinal.setFinalPage(True)
-
-        next = self.button(QWizard.NextButton)
-        #next.clicked.connect(lambda:label.setText(page1.field('miCampo')))
-
-        # Y también podemos recuperar la información cuando se complete el asistente
-        finish = self.button(QWizard.FinishButton)
-        
-        finish.clicked.connect(self.generate)
-
-        self.addPage(pageFinal)
-
-    def button_clicked(self, s):
-        self.show()
-
-
-    def generate(self):
-        # Creamos un diccionario con los datos
-        if self.check_aprobacion_acta_anterior.isChecked():
-            self.aprobado = "Aprobada"
-        else:
-            self.aprobado = "No aprobada"
-        
-        self.data = {
-            'tutor': self.lineEdit_nombre_tutor.text(),
-            'delegado': self.lineEdit_nombre_delegado.text(),
-            'supervisor': self.lineEdit_nombre_supervisor.text(),
-            'curso': self.desplegable_curso.currentText(),
-            'clase': self.desplegable_clase.currentText(),
-            'aprobacion_acta_anterior': self.aprobado,
-            'promocion_extraordinaria': self.spin_promocion_extraordinaria.text(),
-            'itinerario': self.desplegable_itinerario.currentText(),
-            'optativa': self.desplegable_optativa.currentText(),
-        }
-        outfile = "Acta_cumplimentada.pdf"
-
-        template = PdfReader("Acta.pdf", decompress=False).pages[0]
-        template_obj = pagexobj(template)
-
-        canvas = Canvas(outfile)
-
-        xobj_name = makerl(canvas, template_obj)
-        canvas.doForm(xobj_name)
-
-
-        query_promocionan = QSqlQuery("SELECT COUNT(*) FROM alumnos WHERE suspensos3 <= 2",db=db)
-        query_promocionan.next()
-        query_total_alumnos = QSqlQuery("SELECT COUNT(*) FROM alumnos",db=db)
-        query_total_alumnos.next()
-
-        #Para generar la primera gráfica, almacenamos en tres variables el número de alumnos con más de 2 suspensos en cada evaluación
-        query_proyeccion_repetidores_1 = QSqlQuery("SELECT COUNT(*) FROM alumnos WHERE suspensos1 >= 3 AND curso ='" + self.data['clase'] + "'",db=db)
-        query_proyeccion_repetidores_1.next()
-
-        query_proyeccion_repetidores_2 = QSqlQuery("SELECT COUNT(*) FROM alumnos WHERE suspensos2 >= 3 AND curso ='" + self.data['clase'] + "'",db=db)
-        query_proyeccion_repetidores_2.next()
-
-        query_proyeccion_repetidores_3 = QSqlQuery("SELECT COUNT(*) FROM alumnos WHERE suspensos3 >= 3 AND curso ='" + self.data['clase'] + "'",db=db)
-        query_proyeccion_repetidores_3.next()
-
-        #Introducimos la gráfica
-        #print(float(query_promocionan.value[0]))
-        print(float(query_proyeccion_repetidores_1.value(0)))
-        plt1 = pg.plot([int(query_proyeccion_repetidores_1.value(0)),int(query_proyeccion_repetidores_2.value(0)), int(query_proyeccion_repetidores_3.value(0))])
-        plt1.hide()
-        exporter = pg.exporters.ImageExporter(plt1.plotItem)
-        exporter.parameters()['width'] = 150   # (afecta a la altura de forma proporcional)
-        exporter.export('graphic.png')
-        #plt1.close()
-        canvas.drawImage("graphic.png", 233, 426, width=None,height=None,mask=None)
-
-        #Para generar la 2ª gráfica, almacenamos en tres variables el número de alumnos que promocionarían en cada evaluación según el itinerario indicado.
-        query_promocion1_itinerario = QSqlQuery("SELECT COUNT(*) FROM alumnos WHERE suspensos1 < 3 AND itinerario ='" + self.data['itinerario'] + "'",db=db)
-        query_promocion1_itinerario.next()
-
-        query_promocion2_itinerario = QSqlQuery("SELECT COUNT(*) FROM alumnos WHERE suspensos2 < 3 AND itinerario ='" + self.data['itinerario'] + "'",db=db)
-        query_promocion2_itinerario.next()
-
-        query_promocion3_itinerario = QSqlQuery("SELECT COUNT(*) FROM alumnos WHERE suspensos3 < 3 AND itinerario ='" + self.data['itinerario'] + "'",db=db)
-        query_promocion3_itinerario.next()
-
-        plt2 = pg.plot([int(query_promocion1_itinerario.value(0)),int(query_promocion2_itinerario.value(0)), int(query_promocion3_itinerario.value(0))])
-        plt2.hide()
-        exporter2 = pg.exporters.ImageExporter(plt2.plotItem)
-        exporter2.parameters()['width'] = 150   # (afecta a la altura de forma proporcional)
-        exporter2.export('graphic2.png')
-        #plt2.close()
-        canvas.drawImage("graphic2.png", 133, 626, width=None,height=None,mask=None)
-
-        
-        porcentaje_promocionados = str(round(100 * float(query_promocionan.value(0))/float(query_total_alumnos.value(0))))
-        ystart = 670
-        canvas.drawString(92, ystart+7, self.data['tutor'])
-
-        # Ponemos la fecha de hoy
-        today = datetime.today()
-        canvas.drawString(444, ystart-577, today.strftime('%F'))
-        canvas.drawString(150, ystart+30, today.strftime('%F'))
-
-        canvas.drawString(280, ystart+111, self.data['curso'])
-        canvas.drawString(379, ystart+30, self.data['clase'])
-        canvas.drawString(110, ystart-52, self.data['aprobacion_acta_anterior'])
-        canvas.drawString(177, ystart-12, self.data['delegado'])
-        canvas.drawString(410, ystart+7, self.data['supervisor'])
-        canvas.drawString(412, ystart-490, self.data['promocion_extraordinaria'])
-        canvas.drawString(440, ystart-470, porcentaje_promocionados)
-
-        canvas.save()
-        QMessageBox.information(self, "Finalizado", "Se ha generado el PDF")
-        #self.close()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

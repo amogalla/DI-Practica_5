@@ -142,9 +142,11 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addWidget(self.tabla)
 
         self.boton = QtWidgets.QPushButton(self.centralwidget) # Creamos el widget Boton
-        self.boton.setText("Generar acta")
+        self.boton.setText("Generar acta de evaluación")
         self.verticalLayout_2.addWidget(self.boton)
-        
+        self.botonGrafica = QtWidgets.QPushButton(self.centralwidget) # Creamos el widget Boton
+        self.botonGrafica.setText("Gráfica de alumnos matriculados en cada itinerario")
+        self.verticalLayout_2.addWidget(self.botonGrafica)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
