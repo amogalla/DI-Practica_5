@@ -1,0 +1,66 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "Tour por mi código",
+  "steps": [
+    {
+      "file": "main.py",
+      "description": "Esta función se utiliza para añadir un nuevo alumno al registro del instituto.",
+      "line": 163
+    },
+    {
+      "file": "main.py",
+      "description": "Con la función modificar, podemos editar los datos de un alumno seleccionado.",
+      "line": 132
+    },
+    {
+      "file": "main.py",
+      "description": "Con este método, podemos eliminar un alumno de la base de datos.",
+      "line": 196
+    },
+    {
+      "file": "main.py",
+      "description": "El botón 'Mostrar gráfica' está conectado a la función mostrar_grafica",
+      "line": 27
+    },
+    {
+      "file": "main.py",
+      "description": "Dicha función, realiza tres consultas (una por cada itinerario existente) para generar la gráfica",
+      "line": 79
+    },
+    {
+      "file": "main.py",
+      "description": "El botón 'Generar acta' se conecta con la función button_clicked",
+      "line": 26
+    },
+    {
+      "file": "main.py",
+      "description": "Este botón muestra un objeto asistente, que es instancia de la clase Asistente.",
+      "line": 76
+    },
+    {
+      "file": "clase_asistente.py",
+      "description": "En la clase asistente, definimos cada una de las páginas.",
+      "line": 31
+    },
+    {
+      "file": "clase_asistente.py",
+      "description": "Al finalizar el asistente, generamos el informe en PDF, por medio de la función generate.",
+      "line": 180
+    },
+    {
+      "file": "clase_asistente.py",
+      "description": "Esta función utiliza un diccionario para almacenar los datos en formato clave-valor.",
+      "line": 195
+    },
+    {
+      "file": "clase_asistente.py",
+      "description": "La última parte del asistente es generar el informe, y esto se hace instanciando la clase ListadoPDF.",
+      "line": 313
+    },
+    {
+      "file": "clase_pdf.py",
+      "description": "Esta clase muestra el informe en PDF embebido en la aplicación",
+      "line": 8
+    }
+  ]
+}
