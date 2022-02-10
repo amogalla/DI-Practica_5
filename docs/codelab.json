@@ -1,0 +1,25 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2022-02-10T22:28:31+01:00",
+  "id": "como-generar-informe-acta-AOL",
+  "duration": 12,
+  "title": "Cómo generar el acta de la sesión de evaluación",
+  "summary": "Tutorial para generar el acta de la sesión de evaluación en formato PDF",
+  "source": "prueba1.md",
+  "theme": "",
+  "status": [
+    "draft"
+  ],
+  "category": [
+    "codelab",
+    "markdown"
+  ],
+  "tags": [
+    "web"
+  ],
+  "feedback": "Un enlace en el que los usuarios puedan darte",
+  "url": "como-generar-informe-acta-AOL"
+}
