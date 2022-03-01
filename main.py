@@ -12,15 +12,15 @@ from pdfrw import PdfReader
 from pdfrw.buildxobj import pagexobj
 from pdfrw.toreportlab import makerl
 # Realizamos la carga y apertura de la base de datos
-db = QSqlDatabase("QSQLITE")
-db.setDatabaseName("alumnos.sqlite")
 
-db.open()
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
-        
+        self.db = QSqlDatabase("QSQLITE")
+        self.db.setDatabaseName("alumnos.sqlite")
+
+        self.db.open()
         # Cargamos la UI
         self.setupUi(self)
         self.boton.clicked.connect(self.button_clicked)
@@ -30,13 +30,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.lineEdit_ID.setEnabled(False)
 
         # Creamos una query para obtener todos los artistas de la tabla Artist
-        query = QSqlQuery("SELECT DISTINCT curso FROM alumnos",db=db)
+        query = QSqlQuery("SELECT DISTINCT curso FROM alumnos",db=self.db)
         # Recorremos el resultado de esa query agregando al comboBox el listado de artistas
         while query.next():
             self.comboBox_curso.addItem(query.value(0))
 
         # Creamos un modelo relacional de SQL
-        self.modelo = QSqlRelationalTableModel(db=db)
+        self.modelo = QSqlRelationalTableModel(db=self.db)
         # Establecemos Album como tabla del modelo
         self.modelo.setTable("alumnos")
         # Establecemos la relación entre el ID de los artistas y su nombre, para que se muestre este último
@@ -71,20 +71,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Ponemos la fila inicial a un valor que indica que no está seleccionada ninguna fila
         self.fila = -1
 
+
         self.asistente = Asistente()
+
+    #def prueba(self):
+       # return 3
 
     def button_clicked(self, s):
         self.asistente.show()
     
     def mostrar_grafica(self, s):
         #Para generar la primera gráfica, almacenamos en tres variables el número de alumnos con más de 2 suspensos en cada evaluación
-        query_matriculados_ciencias = QSqlQuery("SELECT COUNT(*) FROM alumnos WHERE itinerario ='Ciencias'",db=db)
+        query_matriculados_ciencias = QSqlQuery("SELECT COUNT(*) FROM alumnos WHERE itinerario ='Ciencias'",db=self.db)
         query_matriculados_ciencias.next()
 
-        query_matriculados_sociales = QSqlQuery("SELECT COUNT(*) FROM alumnos WHERE itinerario ='Sociales'",db=db)
+        query_matriculados_sociales = QSqlQuery("SELECT COUNT(*) FROM alumnos WHERE itinerario ='Sociales'",db=self.db)
         query_matriculados_sociales.next()
 
-        query_matriculados_humanidades = QSqlQuery("SELECT COUNT(*) FROM alumnos WHERE itinerario ='Humanidades'",db=db)
+        query_matriculados_humanidades = QSqlQuery("SELECT COUNT(*) FROM alumnos WHERE itinerario ='Humanidades'",db=self.db)
         query_matriculados_humanidades.next()
 
         #Introducimos la gráfica
@@ -125,6 +129,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.lineEdit_itinerario.setText(itineario)
             self.lineEdit_optativa.setText(optativa)
             self.lineEdit_repetidor.setText(str(repetidor))
+
+            #print(self.fila)
+            print(self.tabla.selectionModel().selectedIndexes()[0].row())
+            #print(seleccion)
         else:
             # Si no hay selección,  ponemos la fila inicial a un valor que indica que no está seleccionada ninguna fila
             self.fila = -1
@@ -160,6 +168,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             # Ejecutamos los cambios en el modelo
             self.modelo.submit()
 
+    def num_alumnos(self):
+        query = QSqlQuery("SELECT id FROM alumnos",db=self.db)
+        while query.next():
+            indice=query.value(0)
+        return indice
+
     def nueva(self):
         # Guardamos en la variable nuevaFila el número de filas del modelo
         nuevaFila = self.modelo.rowCount()
@@ -167,9 +181,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.modelo.insertRow(nuevaFila)
         # Seleccionamos la fila nueva
         self.tabla.selectRow(nuevaFila)
-        query = QSqlQuery("SELECT id FROM alumnos",db=db)
-        while query.next():
-            indice=query.value(0)
+        self.numero_alumnos = self.num_alumnos()
         # Ponemos en blanco los textos
         self.lineEdit_nombre.setText("")
         self.lineEdit_apellidos.setText("")
@@ -179,7 +191,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.lineEdit_itinerario.setText("")
         self.lineEdit_optativa.setText("")
         self.lineEdit_repetidor.setText("")
-        self.lineEdit_ID.setText(str(indice + 1))
+        self.lineEdit_ID.setText(str(self.numero_alumnos + 1))
         self.comboBox_curso.setCurrentIndex(0)
         self.modelo.setData(self.modelo.index(nuevaFila, 1), "")
         self.modelo.setData(self.modelo.index(nuevaFila, 2), "")
@@ -218,5 +230,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     window = MainWindow()
+    
     window.show()
     sys.exit(app.exec())
