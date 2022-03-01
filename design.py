@@ -24,6 +24,7 @@ from PySide6.QtWidgets import QGraphicsOpacityEffect, QHBoxLayout, QMainWindow, 
 from PySide6 import QtCore, QtWidgets
 
 import resources_rc
+from smilerating import SmileRating
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -148,6 +149,10 @@ class Ui_MainWindow(object):
         self.botonGrafica.setText("Gráfica de alumnos matriculados en cada itinerario")
         self.verticalLayout_2.addWidget(self.botonGrafica)
 
+        #COMPONENTE AÑADIDO (@author: Pedro G. Morales)
+        self.smileRating = SmileRating("¡Gracias!")
+        self.verticalLayout_2.addWidget(self.smileRating)
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
@@ -189,7 +194,7 @@ class Ui_MainWindow(object):
 #if QT_CONFIG(shortcut)
         self.actionEliminar.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+D", None))
 #endif // QT_CONFIG(shortcut)
-        self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"Datos del Album", None))
+        self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"Datos del alumno", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"ID", None))
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"Nombre", None))
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"Apellidos", None))
