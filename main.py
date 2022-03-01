@@ -74,9 +74,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.asistente = Asistente()
 
-    #def prueba(self):
-       # return 3
-
     def button_clicked(self, s):
         self.asistente.show()
     
